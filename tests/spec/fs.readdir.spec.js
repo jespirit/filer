@@ -54,4 +54,21 @@ describe('fs.readdir', function() {
       });
     });
   });
+
+  // fsPromises
+  it('should follow symbolic links', function(done) {
+    var fsPromises = util.fs().promises;
+
+    fsPromises.mkdir('/tmp')
+      .then(() => fsPromises.symlink('/', '/tmp/dirLink'))
+      .then(() => fsPromises.readdir('/tmp/dirLink'))
+      .then(files => {
+        expect(files).to.exist;
+        expect(files.length).to.equal(1);
+        expect(files[0]).to.equal('tmp');
+
+        done();
+      })
+      .catch(error => { expect(error).not.to.exist; });
+  });
 });
